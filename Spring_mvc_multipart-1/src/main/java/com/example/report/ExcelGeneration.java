@@ -16,7 +16,7 @@ import org.springframework.web.servlet.view.document.AbstractXlsView;
 import com.example.dto.job_seeker_info;
 import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
-@Component("excel_report")
+@Component
 public class ExcelGeneration extends AbstractXlsView{
 	int i=1;
 	@Override

@@ -51,7 +51,7 @@ public class jscontroller {
 		List<job_seeker_info> list=jservice.FetchTheRecords();
 		map.put("jobseeker_data", list);
 		if(filename.equalsIgnoreCase("excel"))
-			return "excel_report";
+			return "excelGeneration";
 		else
 			return "pdf_report";
 		
@@ -84,8 +84,8 @@ public class jscontroller {
 	job_seeker_info jobinfo=new job_seeker_info();
 		jobinfo.setJsname(jdata.getJsname());
 		jobinfo.setAddress(jdata.getJsaddress());
-		jobinfo.setResumepath(file.getAbsolutePath()+"/"+resumefilename);
-		jobinfo.setPhotopath(file.getAbsolutePath()+"/"+photofilename);
+		jobinfo.setResumepath(file.getAbsolutePath()+"\\"+resumefilename);
+		jobinfo.setPhotopath(file.getAbsolutePath()+"\\"+photofilename);
 		
 		jservice.savethedata(jobinfo);
 		List<job_seeker_info> entry=jservice.FetchTheRecords();
@@ -103,9 +103,9 @@ public class jscontroller {
 	}
 	
 	@GetMapping("/download")
-	public String downloadMeth(HttpServletResponse res,@RequestParam("jsid") Integer Id,
+	public String downloadMeth(@RequestParam("jsid") Integer Id,
 			@RequestParam("type") String type ) throws IOException {
-		
+		System.out.println("jscontroller.downloadMeth()");
 		String filepath=null;
 		if(type.equalsIgnoreCase("resume")) {
 			filepath=jservice.getResumePathById(Id);
@@ -113,19 +113,16 @@ public class jscontroller {
 		else {
 			filepath=jservice.getPhotoPathById(Id);
 		}
-		File file=new File(filepath);
-		res.setContentLengthLong(file.length());
 		
-		String mimetype=sc.getMimeType(filepath);
-		mimetype=mimetype==null?"application/octet-stream":mimetype;
-		res.setContentType(mimetype);
+		File file=new File(filepath);
+		
 		InputStream io= new FileInputStream(file);
-		OutputStream os=res.getOutputStream();
-		res.setHeader("Content-Disposition","attachment,fileName="+file.getName());
+		OutputStream os=new FileOutputStream("C:\\Users\\mouni\\Downloads\\"+file.getName()); 
+		System.out.println(file.getName());
 		IOUtils.copy(io,os);
 		io.close();
 		os.close();
-		return null;
+		return "home";
 	}
 
 }
