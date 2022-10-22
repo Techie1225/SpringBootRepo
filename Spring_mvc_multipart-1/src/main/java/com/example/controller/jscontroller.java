@@ -98,8 +98,7 @@ public class jscontroller {
 	public String ShowTheList(Map<String,Object> map) {
 		List<job_seeker_info> entry=jservice.FetchTheRecords();
 		map.put("entry", entry);
-		return "showreport";
-		
+		return "showreport";	
 	}
 	
 	@GetMapping("/download")
