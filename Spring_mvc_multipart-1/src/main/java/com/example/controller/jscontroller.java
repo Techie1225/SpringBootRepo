@@ -59,6 +59,7 @@ public class jscontroller {
 	
 	@GetMapping("/repo")
 	public String generateReport(Map<String, Object> map, @RequestParam("type") String filename ) {
+		System.out.println("jscontroller.generateReport()");
 		List<job_seeker_info> list=jservice.FetchTheRecords();
 		map.put("jobseeker_data", list);
 		if(filename.equalsIgnoreCase("excel"))
