@@ -135,14 +135,11 @@ public class jscontroller {
 		return "home";
 	}
 	
-	
-	 
-	
 	     
 	    @GetMapping("/downloadFile/{fileCode}")
 	    public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode) {
 	        
-	         
+	        System.out.println("jscontroller.downloadFile()"); 
 	        Resource resource = null;
 	        try {
 	            resource = jservice.getFileAsResource(fileCode);
