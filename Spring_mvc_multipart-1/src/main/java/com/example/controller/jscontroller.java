@@ -145,7 +145,7 @@ public class jscontroller {
 		}
 		
 		File file=new File(filepath);
-		
+		System.out.println(file);
 		InputStreamResource resource = new InputStreamResource(new FileInputStream(file)); 
 		HttpHeaders headers = new HttpHeaders();
 
