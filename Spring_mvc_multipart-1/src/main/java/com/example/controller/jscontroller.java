@@ -29,6 +29,7 @@ import com.example.service.job_service;
 
 import java.io.IOException;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -113,10 +114,28 @@ public class jscontroller {
 		return "showreport";	
 	}
 	
-	@GetMapping("/download")
-	public String downloadMeth(@RequestParam("jsid") Integer Id,
-			@RequestParam("type") String type ) throws IOException {
-		System.out.println("jscontroller.downloadMeth()");
+	/*
+	 * @GetMapping("/download") public String downloadMeth(@RequestParam("jsid")
+	 * Integer Id,
+	 * 
+	 * @RequestParam("type") String type ) throws IOException {
+	 * System.out.println("jscontroller.downloadMeth()"); String filepath=null;
+	 * if(type.equalsIgnoreCase("resume")) {
+	 * filepath=jservice.getResumePathById(Id); } else {
+	 * filepath=jservice.getPhotoPathById(Id); }
+	 * 
+	 * File file=new File(filepath);
+	 * 
+	 * InputStream io= new FileInputStream(file); OutputStream os=new
+	 * FileOutputStream("C:\\Users\\mouni\\Downloads\\"+file.getName());
+	 * System.out.println(file.getName()); IOUtils.copy(io,os); io.close();
+	 * os.close(); return "home"; }
+	 */
+	
+	@GetMapping("/download") 
+	public ResponseEntity<Object> downloadMeth(@RequestParam("jsid") Integer Id,
+			@RequestParam("type") String type ) throws IOException  {
+
 		String filepath=null;
 		if(type.equalsIgnoreCase("resume")) {
 			filepath=jservice.getResumePathById(Id);
@@ -127,38 +146,16 @@ public class jscontroller {
 		
 		File file=new File(filepath);
 		
-		InputStream io= new FileInputStream(file);
-		OutputStream os=new FileOutputStream("C:\\Users\\mouni\\Downloads\\"+file.getName()); 
-		System.out.println(file.getName());
-		IOUtils.copy(io,os);
-		io.close();
-		os.close();
-		return "home";
+		InputStreamResource resource = new InputStreamResource(new FileInputStream(file)); 
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName())); 
+	//	headers.add("Cache-Control", "no-cache, no-store, must-revalidate"); 
+	//	headers.add("Pragma", "no-cache"); headers.add("Expires", "0");
+
+		ResponseEntity<Object> responseEntity =ResponseEntity.ok().headers(headers) .contentLength(file.length()) .contentType(MediaType.parseMediaType("application/txt")).body(resource);
+
+		return responseEntity;
 	}
-	
-	     
-	    @GetMapping("/downloadFile/{fileCode}")
-	    public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode) {
-	        
-	        System.out.println("jscontroller.downloadFile()"); 
-	        Resource resource = null;
-	        try {
-	            resource = jservice.getFileAsResource(fileCode);
-	        } catch (IOException e) {
-	            return ResponseEntity.internalServerError().build();
-	        }
-	         
-	        if (resource == null) {
-	            return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
-	        }
-	         
-	        String contentType = "application/octet-stream";
-	        String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
-	         
-	        return ResponseEntity.ok()
-	                .contentType(MediaType.parseMediaType(contentType))
-	                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-	                .body(resource);       
-	    }
 	
 }
